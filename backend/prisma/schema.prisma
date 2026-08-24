@@ -1,0 +1,169 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Pessoa {
+  id              Int      @id @default(autoincrement())
+  nome            String
+  cpf             String   @unique
+  email           String   @unique
+  senha           String
+  utm_login       String?  @unique
+  telefone        String?
+  data_nascimento DateTime?
+
+  atleta       Atleta?
+  treinador    Treinador?
+  responsavel  Responsavel?
+}
+
+model Responsavel {
+  id        Int     @id @default(autoincrement())
+  pessoaId  Int     @unique
+
+  pessoa    Pessoa  @relation(fields: [pessoaId], references: [id])
+  atletas   Atleta[]
+}
+
+model Atleta {
+  id        Int     @id @default(autoincrement())
+  pessoaId  Int     @unique
+
+  pessoa    Pessoa  @relation(fields: [pessoaId], references: [id])
+
+  // Responsável
+  responsavelId Int?
+  responsavel   Responsavel? @relation(fields: [responsavelId], references: [id])
+
+  // Turmas
+  turmas    Esta[]
+  
+  // Frequências
+  frequencias Frequencia[]
+}
+
+model Treinador {
+  id        Int     @id @default(autoincrement())
+  pessoaId  Int     @unique
+
+  pessoa    Pessoa  @relation(fields: [pessoaId], references: [id])
+
+  // Um treinador pode ter várias turmas
+  turmas    Turma[]
+
+  // Organizações criadas pelo treinador
+  organizacoes Organizacao[]
+}
+
+model Organizacao {
+  id          Int      @id @default(autoincrement())
+  nome        String
+
+  // Quem criou
+  treinadorId Int
+  treinador   Treinador @relation(fields: [treinadorId], references: [id])
+
+  // Endereço
+  enderecoId  Int
+  endereco    Endereco @relation(fields: [enderecoId], references: [id])
+
+  // Turmas
+  turmas      Turma[]
+
+  // Esportes
+  esportes    OrganizacaoEsporte[]
+}
+
+model Endereco {
+  id       Int    @id @default(autoincrement())
+  rua      String
+  vila     String?
+  numero   String
+
+  cidadeId Int
+  cidade   Cidade @relation(fields: [cidadeId], references: [id])
+
+  organizacoes Organizacao[]
+}
+
+model Cidade {
+  id        Int    @id @default(autoincrement())
+  nome      String
+
+  enderecos Endereco[]
+}
+
+model Esporte {
+  id          Int    @id @default(autoincrement())
+  nome        String
+
+  turmas      Turma[]
+  organizacoes OrganizacaoEsporte[]
+}
+
+model OrganizacaoEsporte {
+  organizacaoId Int
+  esporteId     Int
+
+  organizacao Organizacao @relation(fields: [organizacaoId], references: [id])
+  esporte     Esporte     @relation(fields: [esporteId], references: [id])
+
+  @@id([organizacaoId, esporteId])
+}
+
+model Turma {
+  id             Int      @id @default(autoincrement())
+  
+  organizacaoId  Int
+  treinadorId    Int
+  esporteId      Int
+
+  organizacao    Organizacao @relation(fields: [organizacaoId], references: [id])
+  treinador      Treinador   @relation(fields: [treinadorId], references: [id])
+  esporte        Esporte     @relation(fields: [esporteId], references: [id])
+
+  // Atletas matriculados
+  atletas        Esta[]
+
+  // Aulas
+  aulas          Aula[]
+}
+
+model Esta {
+  atletaId       Int
+  turmaId        Int
+
+  data_entrada   DateTime
+  data_saida     DateTime?
+
+  atleta         Atleta @relation(fields: [atletaId], references: [id])
+  turma          Turma  @relation(fields: [turmaId], references: [id])
+
+  @@id([atletaId, turmaId])
+}
+
+model Aula {
+  id          Int      @id @default(autoincrement())
+  data_hora   DateTime
+
+  turmaId     Int
+  turma       Turma @relation(fields: [turmaId], references: [id])
+
+  frequencias Frequencia[]
+}
+
+model Frequencia {
+  atletaId    Int
+  aulaId      Int
+  presente    Boolean
+
+  atleta      Atleta @relation(fields: [atletaId], references: [id])
+  aula        Aula   @relation(fields: [aulaId], references: [id])
+
+  @@id([atletaId, aulaId])
+}

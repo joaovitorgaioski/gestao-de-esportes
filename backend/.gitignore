@@ -1,0 +1,20 @@
+node_modules
+# Keep environment variables out of version control
+.env
+
+/src/generated/prisma
+backend/agents/skills/prisma/SKILL.md
+backend/agents/skills/prisma/db-seed.md
+backend/agents/skills/prisma/format.md
+backend/agents/skills/prisma/generate.md
+backend/agents/skills/prisma/init.md
+backend/agents/skills/prisma/mcp.md
+backend/agents/skills/prisma/migrate-dev.md
+backend/agents/skills/prisma/migrate-deploy.md
+backend/agents/skills/prisma/migrate-diff.md
+backend/agents/skills/prisma/migrate-reset.md
+backend/agents/skills/prisma/migrate-resolve.md
+backend/agents/skills/prisma/migrate-status.md
+backend/agents/skills/prisma/studio.md
+backend/agents/skills/prisma/validate.md
+backend/agents/skills/prisma/client-methods.md
