@@ -29,7 +29,15 @@
 
 ```bash
 $ npm install
+$ Copy-Item .env.example .env
+$ docker compose up -d
+$ npm run prisma:generate
+$ npm run prisma:migrate -- --name inicial
 ```
+
+## Banco de dados
+
+O projeto usa PostgreSQL local pelo Docker, sem conta externa. Copie `.env.example` para `.env` e mantenha a `DATABASE_URL` padrão. Inicie o banco com `docker compose up -d` antes de rodar as migrations. O arquivo `.env` não é versionado.
 
 ## Compile and run the project
 
